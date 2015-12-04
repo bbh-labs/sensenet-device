@@ -56,13 +56,7 @@ void setup() {
 	analogWrite(LEVEL_PIN, 142);
 
 	// Bluetooth
-	#ifdef ATMODE
-	Serial1.begin(38400);
-	delay(1000);
-	Serial1.write("AT+ROLE\r\n");
-	#else
 	Serial1.begin(9600);
-	#endif
 	
 	// LED
 	pinMode(LED_PIN, OUTPUT);
@@ -146,7 +140,7 @@ void doUV() {
 	int uvLevel = averageAnalogRead(UVOUT);
 	int refLevel = averageAnalogRead(REF_3V3);
 	float outputVoltage = 3.3 / refLevel * uvLevel;
-	uvIntensity = mapfloat(outputVoltage, 0.99, 2.8, 0.0, 15.0); // Convert the voltage to a UV intensity level
+	uvIntensity = mapfloat(outputVoltage, 0.99, 2.8, 0.0, 15.0) * 100; // Convert the voltage to a UV intensity level
 
 	#ifdef DEBUG
 	Serial.print("UV: ");
