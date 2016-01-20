@@ -1,6 +1,6 @@
 static const char DEVICE_ID[] = "71GM9xi757";
 
-#define USE_BLUETOOTH
+//#define USE_BLUETOOTH
 
 #include "Bluetooth.hpp"
 #include "CarbonMonoxide.hpp"
@@ -66,7 +66,7 @@ void loop() {
 	Serial.print(uv.value);
 	Serial.print(",\"particles\":");
 	Serial.print(opticalDust.value);
-	Serial1.println("}");
+	Serial.println("}");
 	#endif
 
 	delay(10000);
