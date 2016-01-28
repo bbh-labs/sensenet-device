@@ -3,6 +3,8 @@
 
 class OpticalDust {
 public:
+	static const float minValue;
+	static const float maxValue;
 	float value;
 
 	OpticalDust();
@@ -10,7 +12,8 @@ public:
 	void update();
 
 private:
-	float mVoMeasured;
+	unsigned long mStartTime;
+	unsigned long mLowPulseOccupancy;
 	float mCalcVoltage;
 };
 

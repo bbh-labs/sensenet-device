@@ -13,6 +13,6 @@ int averageAnalogRead(int pin) {
 	return runningValue;
 }
 
-float mapfloat(float x, float in_min, float in_max, float out_min, float out_max) {
-	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+float mapfloat(float x, float min1, float max1, float min2, float max2) {
+	return (x - min1) / (max1 - min1) * (max2 - min2) + min2;
 }

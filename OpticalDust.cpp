@@ -1,38 +1,33 @@
 #include "OpticalDust.hpp"
 #include <Arduino.h>
 
-static const int MEASURE_PIN = A4;
-static const int LED_PIN = 4;
-static const int SAMPLING_TIME = 280;
-static const int DELTA_TIME = 40;
-static const int SLEEP_TIME = 9680;
+const float OpticalDust::minValue = 0;
+const float OpticalDust::maxValue = 8000;
+
+static const int PIN = 8;
+static const unsigned long SAMPLE_TIME_MS = 2000;
 
 OpticalDust::OpticalDust() :
 	value(0),
-	mVoMeasured(0),
-	mCalcVoltage(0)
+	mStartTime(0),
+	mLowPulseOccupancy(0)
 {
 }
 
 void OpticalDust::init() {
-	pinMode(LED_PIN,OUTPUT);
+	pinMode(PIN, INPUT);
+	mStartTime = millis();
 }
 
 void OpticalDust::update() {
-	digitalWrite(LED_PIN, LOW); // power on the LED
-	delayMicroseconds(SAMPLING_TIME);
+	const unsigned long duration = pulseIn(PIN, LOW);
+	mLowPulseOccupancy += duration;
 
-	mVoMeasured = analogRead(MEASURE_PIN); // read the dust value
-
-	delayMicroseconds(DELTA_TIME);
-	digitalWrite(LED_PIN, HIGH); // turn the LED off
-	delayMicroseconds(SLEEP_TIME);
-
-	// 0 - 3.3V mapped to 0 - 1023 integer values
-	// recover voltage
-	mCalcVoltage = mVoMeasured * (3.3 / 1024);
-
-	// linear eqaution taken from http://www.howmuchsnow.com/arduino/airquality/
-	// Chris Nafis (c) 2012
-	value = 0.17 * mCalcVoltage - 0.1;
+	// if the sample time == 30s
+	if ((millis() - mStartTime) >= SAMPLE_TIME_MS) {
+		const float ratio = mLowPulseOccupancy / (SAMPLE_TIME_MS * 10.0);  // Integer percentage 0=&gt;100
+		value = 1.1 * pow(ratio, 3) - 3.8 * pow(ratio, 2) + 520 * ratio + 0.62; // using spec sheet curve (pcs/0.01cf)
+		mLowPulseOccupancy = 0;
+		mStartTime = millis();
+	}
 }
