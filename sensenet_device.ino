@@ -35,40 +35,39 @@ void loop() {
 	uv.update();
 	opticalDust.update();
 
-	#ifdef USE_BLUETOOTH
-	bluetooth.update();
-	if (bluetooth.connected()) {
-		Serial1.print("{");
-		Serial1.print("\"deviceID\":\"");
-		Serial1.print(DEVICE_ID);
-		Serial1.print("\",\"temperature\":");
-		Serial1.print(temperatureHumidity.celcius);
-		Serial1.print(",\"humidity\":");
-		Serial1.print(temperatureHumidity.humidity);
-		Serial1.print(",\"carbonMonoxide\":");
-		Serial1.print(carbonMonoxide.value);
-		Serial1.print(",\"uv\":");
-		Serial1.print(uv.value);
-		Serial1.print(",\"particles\":");
-		Serial1.print(opticalDust.value);
-		Serial1.println("}");
-	}
-	#else
-	Serial.print("{");
-	Serial.print("\"deviceID\":\"");
-	Serial.print(DEVICE_ID);
-	Serial.print("\",\"temperature\":");
-	Serial.print(temperatureHumidity.celcius);
-	Serial.print(",\"humidity\":");
-	Serial.print(temperatureHumidity.humidity);
-	Serial.print(",\"carbonMonoxide\":");
-	Serial.print(carbonMonoxide.value);
-	Serial.print(",\"uv\":");
-	Serial.print(uv.value);
-	Serial.print(",\"particles\":");
-	Serial.print(opticalDust.value);
-	Serial.println("}");
-	#endif
+	sendData();
 
 	delay(1000);
+}
+
+// Data Format
+// -----------
+// deviceID    => string  (10 bytes)
+// temperature => float   ( 4 bytes)
+// humidity    => float   ( 4 bytes)
+// UV          => float   ( 4 bytes)
+// particles   => float   ( 4 bytes)
+// CO          => int16_t ( 2 bytes)
+// EOL         => string  ( 2 bytes)
+
+#define serialWrite(out, data) (out.write((const char *) &data, sizeof(data)))
+
+void sendData() {
+#ifdef USE_BLUETOOTH
+	HardwareSerial &out = Serial1;
+	bluetooth.update();
+	if (!bluetooth.connected()) {
+		return;
+	}
+#else
+	Serial_ &out = Serial;
+#endif
+	out.write(DEVICE_ID);
+	serialWrite(out, temperatureHumidity.celcius);
+	serialWrite(out, temperatureHumidity.humidity);
+	serialWrite(out, carbonMonoxide.value);
+	serialWrite(out, uv.value);
+	serialWrite(out, opticalDust.value);
+	out.write("\r\n");
+	out.flush();
 }
