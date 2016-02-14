@@ -22,6 +22,8 @@ void setup() {
 	opticalDust.init();
 
 	#ifdef USE_BLUETOOTH
+	pinMode(13, OUTPUT);
+	digitalWrite(13, HIGH);
 	Serial1.begin(9600);
 	bluetooth.init();
 	#else
@@ -62,12 +64,23 @@ void sendData() {
 #else
 	Serial_ &out = Serial;
 #endif
+
+#ifdef DEBUG
+	Serial.print("deviceID: "); Serial.print(DEVICE_ID);
+	Serial.print(", temperature: "); Serial.print(temperatureHumidity.celcius);
+	Serial.print(", humidity: "); Serial.print(temperatureHumidity.humidity);
+	Serial.print(", carbonMonoxide: "); Serial.print(carbonMonoxide.value);
+	Serial.print(", uv: "); Serial.print(uv.value);
+	Serial.print(", particles: "); Serial.print(opticalDust.value);
+	Serial.println();
+#else
 	out.write(DEVICE_ID);
 	serialWrite(out, temperatureHumidity.celcius);
 	serialWrite(out, temperatureHumidity.humidity);
-	serialWrite(out, carbonMonoxide.value);
 	serialWrite(out, uv.value);
 	serialWrite(out, opticalDust.value);
+	serialWrite(out, carbonMonoxide.value);
 	out.write("\r\n");
 	out.flush();
+#endif
 }

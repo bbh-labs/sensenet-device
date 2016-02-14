@@ -14,5 +14,11 @@ void CarbonMonoxide::init() {
 }
 
 void CarbonMonoxide::update() {
+	// Warm-up analogRead
+	analogRead(CO_PIN);
+	delay(10);
+
+	// Actual reading
 	value = analogRead(CO_PIN);
+	delay(10);
 }
