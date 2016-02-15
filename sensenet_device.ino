@@ -1,7 +1,8 @@
 static const char DEVICE_ID[] = "71GM9xi757";
 //static const char DEVICE_ID[] = "2GMD3PyH22";
 
-//#define USE_BLUETOOTH
+#define USE_BLUETOOTH
+//#define DEBUG
 
 #include "Bluetooth.hpp"
 #include "CarbonMonoxide.hpp"
