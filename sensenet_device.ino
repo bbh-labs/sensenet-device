@@ -1,6 +1,8 @@
 static const char DEVICE_ID[] = "71GM9xi757";
 //static const char DEVICE_ID[] = "2GMD3PyH22";
 
+static const unsigned long INTERVAL = 10000; // milliseconds
+
 #define USE_BLUETOOTH
 //#define DEBUG
 
@@ -40,7 +42,7 @@ void loop() {
 
 	sendData();
 
-	delay(1000);
+	delay(INTERVAL);
 }
 
 // Data Format
