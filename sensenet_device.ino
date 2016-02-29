@@ -40,7 +40,7 @@ void loop() {
 	uv.update();
 	opticalDust.update();
 
-	sendData();
+	sendReading();
 
 	delay(INTERVAL);
 }
@@ -57,7 +57,7 @@ void loop() {
 
 #define serialWrite(out, data) (out.write((const char *) &data, sizeof(data)))
 
-void sendData() {
+void sendReading() {
 #ifdef USE_BLUETOOTH
 	HardwareSerial &out = Serial1;
 	bluetooth.update();
