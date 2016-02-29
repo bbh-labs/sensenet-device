@@ -1,10 +1,9 @@
-static const char DEVICE_ID[] = "71GM9xi757";
-//static const char DEVICE_ID[] = "2GMD3PyH22";
+//static const char DEVICE_ID[] = "71GM9xi757";
+static const char DEVICE_ID[] = "2GMD3PyH22";
 
-static const unsigned long INTERVAL = 10000; // milliseconds
+static const unsigned long INTERVAL = 5000; // milliseconds
 
 #define USE_BLUETOOTH
-//#define DEBUG
 
 #include "Bluetooth.hpp"
 #include "CarbonMonoxide.hpp"
@@ -68,15 +67,7 @@ void sendReading() {
 	Serial_ &out = Serial;
 #endif
 
-#ifdef DEBUG
-	Serial.print("deviceID: "); Serial.print(DEVICE_ID);
-	Serial.print(", temperature: "); Serial.print(temperatureHumidity.celcius);
-	Serial.print(", humidity: "); Serial.print(temperatureHumidity.humidity);
-	Serial.print(", carbonMonoxide: "); Serial.print(carbonMonoxide.value);
-	Serial.print(", uv: "); Serial.print(uv.value);
-	Serial.print(", particles: "); Serial.print(opticalDust.value);
-	Serial.println();
-#else
+#ifdef USE_BLUETOOTH
 	out.write(DEVICE_ID);
 	serialWrite(out, temperatureHumidity.celcius);
 	serialWrite(out, temperatureHumidity.humidity);
@@ -85,5 +76,13 @@ void sendReading() {
 	serialWrite(out, carbonMonoxide.value);
 	out.write("\r\n");
 	out.flush();
+#else
+	Serial.print("deviceID: "); Serial.print(DEVICE_ID);
+	Serial.print(", temperature: "); Serial.print(temperatureHumidity.celcius);
+	Serial.print(", humidity: "); Serial.print(temperatureHumidity.humidity);
+	Serial.print(", carbonMonoxide: "); Serial.print(carbonMonoxide.value);
+	Serial.print(", uv: "); Serial.print(uv.value);
+	Serial.print(", particles: "); Serial.print(opticalDust.value);
+	Serial.println();
 #endif
 }
