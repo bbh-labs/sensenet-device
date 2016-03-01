@@ -1,7 +1,8 @@
 //static const char DEVICE_ID[] = "71GM9xi757";
 static const char DEVICE_ID[] = "2GMD3PyH22";
 
-static const unsigned long INTERVAL = 5000; // milliseconds
+static const unsigned long SEND_READING_INTERVAL = 5000; // milliseconds
+static const unsigned long UPDATE_INTERVAL = SEND_READING_INTERVAL / 10; // milliseconds
 
 #define USE_BLUETOOTH
 
@@ -16,6 +17,8 @@ CarbonMonoxide carbonMonoxide;
 TemperatureHumidity temperatureHumidity;
 UV uv;
 OpticalDust opticalDust;
+
+static unsigned long lastUpdateTime;
 
 void setup() {
 	carbonMonoxide.init();
@@ -39,9 +42,13 @@ void loop() {
 	uv.update();
 	opticalDust.update();
 
-	sendReading();
+	unsigned long now = millis();
+	if (now - lastUpdateTime > SEND_READING_INTERVAL) {
+		sendReading();
+		lastUpdateTime = now;
+	}
 
-	delay(INTERVAL);
+	delay(UPDATE_INTERVAL);
 }
 
 // Data Format

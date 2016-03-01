@@ -3,6 +3,8 @@
 
 class UV {
 public:
+	static const float minValue;
+	static const float maxValue;
 	float value;
 
 	UV();

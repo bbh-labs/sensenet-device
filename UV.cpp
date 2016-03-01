@@ -2,6 +2,9 @@
 #include "util.hpp"
 #include <Arduino.h>
 
+const float UV::minValue = 0;
+const float UV::maxValue = 15;
+
 static const int UVOUT = A1;
 static const int REF_3V3 = A2;
 
@@ -16,14 +19,17 @@ void UV::init() {
 }
 
 void UV::update() {
-	const int uvLevel = analogRead(UVOUT);
+	int uvLevel = map(analogRead(UVOUT), 221, 1024, 0, 1024);
 	delay(10);
-	const int refLevel = analogRead(REF_3V3);
+	const int refLevel = 1024 * 3.3 / 5;
 	delay(10);
+
+	if (uvLevel < 0)
+		uvLevel = 0;
 
 	const float outputVoltage = 3.3 / refLevel * uvLevel;
 	//Serial.print(uvLevel);
 	//Serial.print(" ");
 	//Serial.println(refLevel);
-	value = mapfloat(outputVoltage, 0.0, 3.3, 0.0, 15.0); // Convert the voltage to a UV intensity level
+	value = mapfloat(outputVoltage, 0.0, 3.3, minValue, maxValue); // Convert the voltage to a UV intensity level
 }
